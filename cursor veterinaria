@@ -1,0 +1,24 @@
+--CURSOR--
+--POR CADA CLIENTE ME SALGA EL INSUMO APLICADO A LA MASCOTA, CANTIDAD, PRECIO, Y TOTAL A PAGAR
+	DECLARE  @Nombres CHAR(12),@Apellidos CHAR(12),
+	     @Nombre_Insumo CHAR(12),@Cantidad CHAR(12),
+		 @PVP CHAR(12),@Total_a_Pagar CHAR(12)
+	DECLARE CURSOR1 CURSOR 
+	FOR SELECT C.Nombres,C.Apellidos,I.Nombre AS Nombre_Insumo,V.Cantidad,I.PVP,
+		   SUM(V.PrecioTotal+I.PVP) AS Total_a_Pagar FROM VENTAS AS V 
+	       JOIN CLIENTES AS C ON C.id_Cliente=V.Clientepk
+           JOIN INSUMOS AS I ON I.id_INSUMO=V.Insumopk WHERE I.id_INSUMO=V.Insumopk
+	       GROUP BY C.Nombres,C.Apellidos,I.Nombre,V.Cantidad,I.PVP	
+	OPEN CURSOR1
+	FETCH CURSOR1 INTO  @Nombres,@Apellidos,@Nombre_Insumo,@Cantidad,@PVP,@Total_a_Pagar
+	PRINT 'Nombres     Apellidos    Insumo_Aplicado_Mascota  Cantidad         PVP         Total_a_Pagar  '
+	PRINT'-------------------------------------------------------------------------------------------------'
+	WHILE @@FETCH_STATUS=0
+	BEGIN
+	PRINT @Nombres +SPACE(5)+@Apellidos +SPACE(5)
+	+@Nombre_Insumo +SPACE(5)+@Cantidad +SPACE(5)
+	+@PVP +SPACE(5)+@Total_a_Pagar+SPACE(5)
+	FETCH CURSOR2 INTO  @Nombres,@Apellidos,@Nombre_Insumo,@Cantidad,@PVP,@Total_a_Pagar
+	END
+	CLOSE CURSOR1
+	DEALLOCATE CURSOR1
